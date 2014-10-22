@@ -4,6 +4,7 @@ public class AddBudgetDialog : Gtk.Dialog {
 
     /* variables used by the constuctor */
     private Gtk.Entry budget_entry;
+
   
     
     public AddBudgetDialog () {  // constructor
@@ -22,7 +23,7 @@ public class AddBudgetDialog : Gtk.Dialog {
 
     
         /* layout */
-        Gtk.Box dbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 5); 
+        Gtk.Box dbox = new Gtk.Box (Gtk.Orientation.VERTICAL, 10); 
         
         /* widgets */
         Gtk.Label budget_label = new Gtk.Label ("Budget name");
@@ -31,30 +32,34 @@ public class AddBudgetDialog : Gtk.Dialog {
         this.budget_entry = new Gtk.Entry ();
         Gtk.Label date_choice_label = new Gtk.Label ("Close event automatically");
         date_choice_label.set_alignment (0, 0);
+
         Gtk.Switch date_choice_switch = new Gtk.Switch ();
+        date_choice_switch.set_active (false);
+        Gtk.Revealer revealer = new Gtk.Revealer ();
         Granite.Widgets.DatePicker date_picker = new Granite.Widgets.DatePicker ();
+        revealer.add (date_picker);
+        
 
-        date_picker.set_visible (false);
-
+        
         dbox.pack_start (budget_label,false, false, 0);
         dbox.pack_start (budget_entry, false, false, 0);
         dbox.pack_start (date_choice_label, false, false, 0);
         dbox.pack_start (date_choice_switch, false, false, 0);
-        dbox.pack_start (date_picker, false, false, 0);
+        dbox.pack_start (revealer, false, false, 0);
         
 
         
         date_choice_switch.notify["active"].connect ( ()=> {
             if (date_choice_switch.active) {
-                date_picker.set_visible (true);
+                revealer.set_reveal_child (true);
             } else {
-                date_picker.set_visible (false);
+                revealer.set_reveal_child (false);
             }
         });
         
         
 
-        //date_choice_switch.set_state (false);
+
         
         
         
