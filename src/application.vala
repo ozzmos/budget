@@ -5,6 +5,7 @@ using Granite.Widgets;
 
     public class Budget : Granite.Application{
     
+        private DatabaseConnection db_conn;
         private Window window;
         private Gtk.Grid layout;
         private AddBudgetDialog add_budget_dialog;
@@ -34,6 +35,8 @@ using Granite.Widgets;
   
 
         public override void activate () {
+            db_conn = new DatabaseConnection ();
+
             window = new Gtk.Window ();
             window.title = "Budget";
             window.window_position = Gtk.WindowPosition.CENTER;
@@ -74,7 +77,7 @@ using Granite.Widgets;
             welcome_screen.vexpand = true;
             welcome_screen.hexpand = true;
             welcome_screen.activated.connect (() =>{
-                add_budget_dialog = new AddBudgetDialog ();
+                add_budget ();
                 
                
             });
@@ -97,6 +100,22 @@ using Granite.Widgets;
             welcome.append_with_image (image, "Create", "Create a budget file");
             
             return welcome;
+        }
+
+        private void add_budget () {
+            add_budget_dialog = new AddBudgetDialog ();
+            int response = add_budget_dialog.run ();
+            if (response == Gtk.ResponseType.APPLY) {
+                save_budget ();
+                add_budget_dialog.destroy ();
+            } else {
+                stdout.printf ("Cancel\n");
+                add_budget_dialog.destroy ();
+            }
+        }
+
+        private void save_budget () {
+            
         }
 
 

@@ -15,7 +15,7 @@ public class AddBudgetDialog : Gtk.Dialog {
        
         
         create_widgets ();
-        connect_signals ();
+        //connect_signals ();
     
     }
     
@@ -57,14 +57,7 @@ public class AddBudgetDialog : Gtk.Dialog {
             }
         });
         
-        
 
-
-        
-        
-        
-        
-        
         Gtk.Box content = get_content_area () as Gtk.Box;
         content.pack_start (dbox, false, false, 5);
 
@@ -76,22 +69,5 @@ public class AddBudgetDialog : Gtk.Dialog {
 
     }
 
-    /* connect buttons to signals */
-    private void connect_signals () {
-        this.response.connect (on_response);
-
-    }
-
-    private void on_response (Gtk.Dialog source, int response_id) {
-        switch (response_id) {
-            case Gtk.ResponseType.CANCEL:
-                hide ();
-                break;
-            case Gtk.ResponseType.APPLY:
-                hide ();
-                break;
-
-        }
-        
-    }
+  
 }
