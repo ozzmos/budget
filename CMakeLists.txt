@@ -15,7 +15,7 @@ set (VERSION_INFO "budget")
 # we're about to use pkgconfig to make sure dependencies are installed so let's find pkgconfig first
 find_package(PkgConfig)
 # now let's actually check for the required dependencies
-pkg_check_modules(DEPS REQUIRED gtk+-3.0 libgda-5.0 granite)
+pkg_check_modules(DEPS REQUIRED gtk+-3.0 libgda-5.0 libxml-2.0 granite)
 add_definitions(${DEPS_CFLAGS})
 link_libraries(${DEPS_LIBRARIES})
 link_directories(${DEPS_LIBRARY_DIRS})
@@ -30,11 +30,12 @@ include(ValaPrecompile)
 vala_precompile(VALA_C ${EXEC_NAME}
 src/application.vala
 src/add_budget_dialog.vala
-sr/database.vala
+src/database.vala
 # tell what libraries to use when compiling
 PACKAGES
 gtk+-3.0
 libgda-5.0
+libxml-2.0
 granite
 OPTIONS
     --thread
