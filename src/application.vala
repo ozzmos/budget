@@ -1,11 +1,13 @@
-
+using GLib;
 using Gtk;
+using Gda;
 using Granite.Widgets;
 
 
     public class Budget : Granite.Application{
     
-        private DatabaseConnection db_conn;
+        private DatabaseConnection conn;
+        private Gda.DataModel dm;
         private Window window;
         private Gtk.Grid layout;
         private AddBudgetDialog add_budget_dialog;
@@ -30,12 +32,15 @@ using Granite.Widgets;
             about_comments = "Manage your budget";
             about_translators = "Launchpad Translators";
             about_license_type = Gtk.License.GPL_3_0;
+
+            //conn = new Gda.Connection (Gda.Config.get_provider("SQLite"), "DB_DIR=.;DB_NAME=budget");
+            //setup_database ();
         }
 
   
 
         public override void activate () {
-            db_conn = new DatabaseConnection ();
+            
 
             window = new Gtk.Window ();
             window.title = "Budget";
@@ -112,6 +117,19 @@ using Granite.Widgets;
                 stdout.printf ("Cancel\n");
                 add_budget_dialog.destroy ();
             }
+        }
+
+        private void setup_database () throws GLib.Error {
+            conn.open ();
+            try {
+                dm = conn.execute_select_command("select * from purchases");
+            } catch (GLib.Error err) {
+                conn.execute_non_select_command("create table purchases (id integer primary key, shop_name text, price real, buyer text, purchase_date date)");
+            } finally {
+                conn.close();
+            }
+            
+           
         }
 
         private void save_budget () {
