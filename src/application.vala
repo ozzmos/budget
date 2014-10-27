@@ -124,6 +124,12 @@ using Granite.Widgets;
             "DB_DIR=.;DB_NAME=budget_db", null, Gda.ConnectionOptions.NONE);
             
             try {
+                dm = conn.execute_select_command("select * from budgets");
+            } catch (GLib.Error err) {
+                conn.execute_non_select_command("create table budgets (id integer primary key, budget_name text)");
+            } 
+             
+            try {
                 dm = conn.execute_select_command("select * from purchases");
             } catch (GLib.Error err) {
                 conn.execute_non_select_command("create table purchases (id integer primary key, shop_name text, price real, buyer text, purchase_date date)");
@@ -134,8 +140,21 @@ using Granite.Widgets;
            
         }
 
-        private void save_budget () {
-            
+        private void save_budget () throws GLib.Error {
+        
+            conn.open();
+            Gda.SqlBuilder b = new Gda.SqlBuilder(Gda.SqlStatementType.INSERT);
+            b.set_table("budgets");
+            b.add_field_value_as_gvalue("budget_name", add_budget_dialog.budget_entry.get_text());
+
+            try {
+                Gda.Statement stmt = b.get_statement();
+                conn.statement_execute_non_select(stmt, null, null);
+            } catch (GLib.Error err) {
+                print("insert error !");
+            conn.close();
+            }
+       
         }
 
 

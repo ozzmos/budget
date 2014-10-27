@@ -3,7 +3,7 @@
 public class AddBudgetDialog : Gtk.Dialog {
 
     /* variables used by the constuctor */
-    private Gtk.Entry budget_entry;
+    public Gtk.Entry budget_entry;
 
   
     
