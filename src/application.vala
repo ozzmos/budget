@@ -14,6 +14,8 @@ using Granite.Widgets;
         private Granite.Widgets.Welcome welcome_screen;
         private Window window;
         private Gtk.Grid layout;
+        private Gtk.HeaderBar headerbar;
+        private Gtk.Button add_purchase_button;
         private AddBudgetDialog add_budget_dialog;
         
         construct {
@@ -77,10 +79,14 @@ using Granite.Widgets;
             //toolbar.add(menu);
             
             // Headerbar 
-            var headerbar = new Gtk.HeaderBar ();
+            headerbar = new Gtk.HeaderBar ();
             headerbar.set_title ("Budget");
             headerbar.set_show_close_button (true);
             window.set_titlebar (headerbar);
+
+            // App Menu (give access to the about dialog)
+            var menu = create_appmenu (new Gtk.Menu ());
+            headerbar.pack_end(menu);
 
 
             window.add(layout);
@@ -186,6 +192,8 @@ using Granite.Widgets;
                     welcome_screen.no_show_all = true;
                 }
                 
+                add_purchase_button = new Gtk.Button.from_icon_name ("document-new", Gtk.IconSize.LARGE_TOOLBAR);
+                headerbar.pack_start(add_purchase_button);
 
                 stack = new Gtk.Stack();
                 stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT);
