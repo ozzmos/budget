@@ -5,6 +5,7 @@ public class AddBudgetDialog : Gtk.Dialog {
     /* variables used by the constuctor */
     public Gtk.Entry budget_entry;
 
+
   
     
     public AddBudgetDialog () {  // constructor

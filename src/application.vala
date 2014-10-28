@@ -8,6 +8,10 @@ using Granite.Widgets;
     
         private Gda.Connection conn;
         private Gda.DataModel dm;
+        private bool existing_budgets;
+        private Gtk.Stack stack;
+        private Gtk.StackSwitcher stack_switcher;
+        private Granite.Widgets.Welcome welcome_screen;
         private Window window;
         private Gtk.Grid layout;
         private AddBudgetDialog add_budget_dialog;
@@ -33,6 +37,8 @@ using Granite.Widgets;
             about_translators = "Launchpad Translators";
             about_license_type = Gtk.License.GPL_3_0;
 
+            existing_budgets = false;
+
         }
 
   
@@ -44,6 +50,7 @@ using Granite.Widgets;
             window = new Gtk.Window ();
             window.title = "Budget";
             window.window_position = Gtk.WindowPosition.CENTER;
+            window.set_default_size (800, 600);
 
             window.delete_event.connect (() => {
                 Gtk.main_quit ();
@@ -74,25 +81,17 @@ using Granite.Widgets;
             headerbar.set_title ("Budget");
             headerbar.set_show_close_button (true);
             window.set_titlebar (headerbar);
-            
 
-            // Welcome widget
-            var welcome_screen = create_welcome_screen ();
-            welcome_screen.vexpand = true;
-            welcome_screen.hexpand = true;
-            welcome_screen.activated.connect (() =>{
-                add_budget ();
-                
-               
-            });
+
+            window.add(layout);
+            set_layout();
             
 
             //layout.add (toolbar);
-            layout.add (welcome_screen);
+            
+            
 
-            window.add(layout);
-            window.set_default_size (800, 600);
-            window.show_all ();
+           
         
         }
 
@@ -108,14 +107,18 @@ using Granite.Widgets;
 
         private void add_budget () {
             add_budget_dialog = new AddBudgetDialog ();
+           
+            
             int response = add_budget_dialog.run ();
             if (response == Gtk.ResponseType.APPLY) {
                 save_budget ();
+                set_layout ();
                 add_budget_dialog.destroy ();
             } else {
                 stdout.printf ("Cancel\n");
                 add_budget_dialog.destroy ();
             }
+            
         }
 
         private void setup_database () throws GLib.Error {
@@ -125,15 +128,17 @@ using Granite.Widgets;
             
             try {
                 dm = conn.execute_select_command("select * from budgets");
+                existing_budgets = true;
             } catch (GLib.Error err) {
                 conn.execute_non_select_command("create table budgets (id integer primary key, budget_name text)");
             } 
-             
+            
             try {
                 dm = conn.execute_select_command("select * from purchases");
             } catch (GLib.Error err) {
                 conn.execute_non_select_command("create table purchases (id integer primary key, shop_name text, price real, buyer text, purchase_date date)");
             } 
+            
             conn.close();
             
             
@@ -150,12 +155,63 @@ using Granite.Widgets;
             try {
                 Gda.Statement stmt = b.get_statement();
                 conn.statement_execute_non_select(stmt, null, null);
+                existing_budgets = true;
             } catch (GLib.Error err) {
                 print("insert error !");
-            conn.close();
+                
+            } finally {
+                conn.close();
             }
        
         }
+
+        private void set_layout () {
+            // Welcome widget
+            if (existing_budgets == false) {
+            
+                welcome_screen = create_welcome_screen ();
+                welcome_screen.vexpand = true;
+                welcome_screen.hexpand = true;
+                welcome_screen.activated.connect (() =>{
+                    add_budget ();
+                });
+
+                layout.add (welcome_screen);
+                
+                window.show_all ();
+
+            } else {
+                if (welcome_screen != null) {
+                    welcome_screen.visible = false;
+                    welcome_screen.no_show_all = true;
+                }
+                
+
+                stack = new Gtk.Stack();
+                stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT);
+                stack.set_transition_duration(1000);
+            
+                Gtk.Box balance_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 10);
+                stack.add_titled(balance_box, "balance box", "Balance");
+                Gtk.Box details_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 10);
+                stack.add_titled(details_box, "details box", "Details");
+                Gtk.Box contributors_box = new Gtk.Box(Gtk.Orientation.VERTICAL, 10);
+                stack.add_titled(contributors_box, "contributors box", "Contributors");
+
+                stack_switcher = new Gtk.StackSwitcher();
+                
+                stack_switcher.set_stack(stack);
+                stack.hexpand = true;
+
+                layout.add (stack_switcher);
+                //stack_switcher.show_all();
+            
+                window.show_all ();
+
+            }
+        }
+
+
 
 
         public static int main(string[] args){
