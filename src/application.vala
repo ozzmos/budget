@@ -13,7 +13,7 @@ using Granite.Widgets;
         private Gtk.StackSwitcher stack_switcher;
         private Granite.Widgets.Welcome welcome_screen;
         private Window window;
-        private Gtk.Grid layout;
+        private Gtk.Box layout;
         private Gtk.HeaderBar headerbar;
         private Gtk.Button add_contribution_button;
         private AddBudgetDialog add_budget_dialog;
@@ -61,9 +61,9 @@ using Granite.Widgets;
             });
      
              // Layout
-            layout = new Gtk.Grid ();
-            layout.expand = true;
-            layout.orientation = Gtk.Orientation.VERTICAL;
+            layout = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+            //layout.expand = true;
+            //layout.orientation = Gtk.Orientation.VERTICAL;
             
             // Menu for Elementary OS Luna
             // Toolbar
@@ -177,13 +177,12 @@ using Granite.Widgets;
             if (existing_budgets == false) {
             
                 welcome_screen = create_welcome_screen ();
-                welcome_screen.vexpand = true;
-                welcome_screen.hexpand = true;
+             
                 welcome_screen.activated.connect (() => {
                     add_budget ();
                 });
 
-                layout.add (welcome_screen);
+                layout.pack_start (welcome_screen, true, true, 0);
                 
                 window.show_all ();
 
@@ -214,10 +213,10 @@ using Granite.Widgets;
                 stack_switcher = new Gtk.StackSwitcher();
                 
                 stack_switcher.set_stack(stack);
-                stack.hexpand = true;
-
-                layout.add (stack_switcher);
-                //stack_switcher.show_all();
+                
+                layout.pack_start (stack_switcher, false, false, 10);
+                stack_switcher.set_halign (Gtk.Align.CENTER);
+                
             
                 window.show_all ();
 
