@@ -15,8 +15,9 @@ using Granite.Widgets;
         private Window window;
         private Gtk.Grid layout;
         private Gtk.HeaderBar headerbar;
-        private Gtk.Button add_purchase_button;
+        private Gtk.Button add_contribution_button;
         private AddBudgetDialog add_budget_dialog;
+        private AddContributionDialog add_contribution_dialog;
         
         construct {
             application_id = "com.budget";
@@ -86,11 +87,11 @@ using Granite.Widgets;
 
             // App Menu (give access to the about dialog)
             var menu = create_appmenu (new Gtk.Menu ());
-            headerbar.pack_end(menu);
+            headerbar.pack_end (menu);
 
 
-            window.add(layout);
-            set_layout();
+            window.add (layout);
+            set_layout ();
             
 
             //layout.add (toolbar);
@@ -178,7 +179,7 @@ using Granite.Widgets;
                 welcome_screen = create_welcome_screen ();
                 welcome_screen.vexpand = true;
                 welcome_screen.hexpand = true;
-                welcome_screen.activated.connect (() =>{
+                welcome_screen.activated.connect (() => {
                     add_budget ();
                 });
 
@@ -192,8 +193,12 @@ using Granite.Widgets;
                     welcome_screen.no_show_all = true;
                 }
                 
-                add_purchase_button = new Gtk.Button.from_icon_name ("document-new", Gtk.IconSize.LARGE_TOOLBAR);
-                headerbar.pack_start(add_purchase_button);
+                add_contribution_button = new Gtk.Button.from_icon_name ("document-new", Gtk.IconSize.LARGE_TOOLBAR);
+                headerbar.pack_start(add_contribution_button);
+
+                add_contribution_button.clicked.connect (() => {
+                    add_contribution ();
+                });
 
                 stack = new Gtk.Stack();
                 stack.set_transition_type(Gtk.StackTransitionType.SLIDE_LEFT_RIGHT);
@@ -216,6 +221,19 @@ using Granite.Widgets;
             
                 window.show_all ();
 
+            }
+        }
+
+        private void add_contribution () {
+            add_contribution_dialog = new AddContributionDialog ();
+
+            int response = add_contribution_dialog.run ();
+            if (response == Gtk.ResponseType.APPLY) {
+                stdout.printf ("Apply\n");
+                add_contribution_dialog.destroy ();
+            } else {
+                stdout.printf ("Cancel\n");
+                add_contribution_dialog.destroy ();
             }
         }
 

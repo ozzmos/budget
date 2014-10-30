@@ -30,6 +30,7 @@ include(ValaPrecompile)
 vala_precompile(VALA_C ${EXEC_NAME}
 src/application.vala
 src/add_budget_dialog.vala
+src/add_contribution_dialog.vala
 src/database.vala
 # tell what libraries to use when compiling
 PACKAGES
